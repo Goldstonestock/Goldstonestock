@@ -171,6 +171,30 @@ Content-Type: application/json
 {"sn":"....","pushstockenum":"5","positiontime":"1日"}
 ```
 请以表单的形式显示报告中提供的编号、股票代码、股票名称、看涨得分、实时价、涨跌%、买入区间、挂买价、卖出区间、挂卖价、止盈%、建议金额，信息展现排版时根据前面字段名称右上往下展示。
+选择一只股票策略即可：
+```http
+POST /v1/aiselectstocke
+Content-Type: application/json
+{"sn":"....","selectstocke_id":"..."}
+```
+该策略响应中包含了所必须的模拟投资信息`strategy_id`。
+当用户想要模拟投资或账户余额不为零时，需要创建一个模拟投资流程：
+```http
+POST /v1/aiinvest
+Content-Type: application/json
+{"sn":"....","strategy_id":{strategy_id},"investamount":"....","price":""}
+```
+响应中code 为 1 展示message提示信息
+
+
+
+
+
+
+
+
+
+
 
 ## 全托管策略，用户输入 5
 
