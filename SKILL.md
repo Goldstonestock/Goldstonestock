@@ -1,31 +1,30 @@
 ---
 name: Goldstonestock
-description: The API of Goldstonestock skill bot can be utilized to achieve login based on Goldstonestock, setting of API keys, account inquiry, fund deposit, strategy management, strategy investment and closing, as well as viewing of holdings and profit/loss status. This intelligent agent is merely used as a simulation quantitative software and does not generate real investments. When users wish to have the AI agent operate Goldstonestock, these API functions can be triggered depositing simulated funds through deposit contracts, allocating MAIN funds to various strategies, viewing balance or holdings status, and closing a certain strategy.
+description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能。
 ---
 ## 前置强制约束（必须放在最上方，解决一直思考）
 1. 每一轮**仅处理用户当前单条消息**，输出完回复，本轮立即终止，禁止自动执行下一轮、禁止主动预判用户输入。
 2. menu_open 状态**只在收到用户消息时读取/修改**；模型输出回复阶段，不读取、不修改状态。
 3. 命中规则输出文本后，本轮任务结束，不再额外推理。
 # Goldstonestock
-By leveraging this skill, the intelligent agent can interact on behalf of the user with the Goldstonestock API. Goldstonestock uses email verification for login and employs the user's API key. The intelligent agent merely needs to call the Goldstonestock API. The user's identity identifier is their Goldstonestock trading account, and this account information is passed by the Goldstonestock backend in the form of "trade_name"; do not inquire about the user's private key or the Goldstonestock password.
+利用这项技能，智能代理可以代表用户与 Goldstonestock API 进行交互。Goldstonestock 使用邮箱验证进行登录，并使用用户的 API 密钥。智能代理只需调用 Goldstonestock API 即可。用户的身份标识符是其 Goldstonestock 交易账户，该账户信息由 Goldstonestock 后端以“trade_name”的形式传递；请勿询问用户的私钥或 Goldstonestock 密码。
 ## Configuration
 
-Use the service base URL provided by the user or the environment:
+使用用户或环境提供的服务基本 URL：
 
 ```text
 CLAWSTOCK_API_BASE_URL=https://jtzj.duoso.vip
 ```
 
-If no base URL is known, ask the user for it before calling the API.
+如果不知道基本 URL，请在调用 API 之前向用户询问。
 
-Authenticated requests use the user API key returned by `/v1/aicheckauth`:
+经过身份验证的请求使用以下方式返回的用户 API 密钥/v1/aicheckauth：
 
 ```text
 Authorization: Bearer <api_key>
 ```
 
-Please store this Goldstonestock user API key only in the confidential/session storage space of the proxy program. Do not disclose it unless the user explicitly requests it.
-
+请仅将此 Goldstonestock 用户 API 密钥存储在代理程序的机密/会话存储空间中。除非用户明确请求，否则请勿泄露此密钥。
 
 # Goldstonestock 交互菜单技能
 ## 简介
@@ -55,8 +54,8 @@ Please store this Goldstonestock user API key only in the confidential/session s
 【1】金土量化智能体登录和授权  
 【2】显示主账户余额  
 【3】显示账户每项的交易记录  
-【4】智能选股策略列表  
-【5】智能交易策略列表  
+【4】智能推送策略  
+【5】模拟投资策略  
 【6】模拟入金   
 【7】列出持仓    
 【8】列出已平持仓  
@@ -70,9 +69,9 @@ Please store this Goldstonestock user API key only in the confidential/session s
 【16】列出平仓已撤销订单  
 👉 请回复数字选择功能，或输入 /help 查看指令  
 ### 触发 /help
-Please do not list the complete list of commands in every reply. In the general responses to users, simply state: Users can input `/help` to view all available operations.
+请勿在每次回复中列出所有命令。在回复用户的常规问题时，只需说明：用户可以输入命令`/help`查看所有可用操作。
 
-When a user sends `/help` or asks about available commands, please reply in Chinese with the following list of commands.
+当用户发送`/help`或询问可用命令时，请用中文回复以下命令列表。
 
 | 命令  | 用户操作 | 主要 API 接口 |
 | --- | --- | --- |
@@ -93,6 +92,7 @@ When a user sends `/help` or asks about available commands, please reply in Chin
 |`/Close-order-a`|列出平仓处理中订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=1&sn={....}`|
 |`/Close-order-b`|列出平仓成交订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=3&sn={....}`|
 |`/Close-order-c`|列出平仓撤销订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=4&sn={....}`|
+|`/Strategy <sn> <pushstockenum> <positiontime>`|列出策略。|`POST v1/aipushstock`|
 ### 触发 /reset
 🔄 菜单状态已重置
 菜单已关闭，输入 /menu 重新唤起
@@ -100,17 +100,14 @@ When a user sends `/help` or asks about available commands, please reply in Chin
 ❕ 菜单已关闭
 输入 /menu 随时重新打开菜单
 ## Safety Rules
-- Don't make any claims about guaranteed profits.
--Except for fulfilling the explicit requests of the Goldstonestock users, no personalized financial advice shall be provided.
-- Do not request or handle mnemonic phrases, private keys, wallet passwords or original wallet recovery data.
-- Please treat the API key as confidential information. If an API key is leaked during the chat, please inform the user and make sure to change it as soon as possible if it can be done.
-- Before performing the `POST /v1/aideposit` operation, please confirm with the user the deposit amount and the assets involved.
-- Do not expose the term "JWT token" to the users.
--All the returned results will not display any information related to the field names to the users.
--All API interfaces should be based on the returned fields. Do not add historical fields without authorization.
+- 请勿做出任何保证盈利的承诺。——除满足 Goldstonestock 用户的明确要求外，我们不提供任何个性化的财务建议。
+-请勿索取或处理apk_key、私钥、账户密码或原始账户恢复数据。.
+- 请将 API 密钥视为机密信息。如果在聊天过程中 API 密钥泄露，请立即通知用户，并尽可能尽快更换密钥。
+-执行POST /v1/aideposit操作前，请与用户确认存款金额和涉及的资产。
+- 不要向用户展示“JWT”这个单词。所有返回结果都不要直接向用户显示英文字段名称相关信息，只能翻译为中文展示。所有API接口都应基于返回的字段。未经授权，请勿添加历史字段。
 ## Login Flow ，用户输入 1
-1. Ask the user for their email address.
-2. Create a challenge:
+1. 请用户提供电子邮件地址。
+2. 发起挑战：
 
 ```http
 POST /v1/ailogin
@@ -118,25 +115,23 @@ Content-Type: application/json
 {"username":"...@qq.com"}
 ```
 
-3. Show the returned `Verification code sent successfully`. 
-4. Use the received verification code to validate the result endpoint, continuing this process until the `code` reaches 1
+3.显示返回结果`验证码已成功发送`。
+4.使用收到的验证码验证结果端点，重复此过程直至code达到 1。
 ```http
 POST /v1/aiverylogin
 Content-Type: application/json
 {"username":"...@qq.com","code":"...."}
 ```
 
-5. Save `verify.api_key` from the result response. Do not ask the user to copy the API key from the page.
-
-There is also a direct agent path: if the user provides a signature, call:
-
+5.从结果响应中保存verify.api_key。不要要求用户从页面复制 API 密钥。
+还有一种直接联系代理的途径：如果用户提供了签名，则调用：
 ```http
 POST /v1/aiverify
 Content-Type: application/json
 {"sn":"1234"}
 ```
 
-The verify response includes `id`, `email`, `trade_name`, `isauthposition`, and account data when available.
+验证响应包含 `id`、`email`、`trade_name`、`isauthposition`，以及可用时的账户信息。
 ## Accounts，用户输入 2
 Goldstonestock users have the following identifiable account types:
 - `MAIN`: main accounts are separated by asset.CNH deposits credit the CNH MAIN account.
