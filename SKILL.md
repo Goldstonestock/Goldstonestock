@@ -92,7 +92,11 @@ Authorization: Bearer <api_key>
 |`/Close-order-a`|列出平仓处理中订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=1&sn={....}`|
 |`/Close-order-b`|列出平仓成交订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=3&sn={....}`|
 |`/Close-order-c`|列出平仓撤销订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=4&sn={....}`|
-|`/Strategy <sn> <pushstockenum> <positiontime>`|列出策略。|`POST v1/aipushstock`|
+|`/Strategys`|列出策略。|`GET v1/aistrategylist`|
+|`/Strategy <Strategy_id>`|展示某一条策略详细内容。|`GET v1/aistrategyinfo`|
+|`/selectstocks <sn> <pushstockenum> <positiontime>`|根据某一策略列出智能选股。|`POST v1/aipushstock`|
+|`/selectstock <sn> <selectstocke_id>`|展示某一只股的详细内容。|`POST v1/aiselectstocke`|
+|`/invest <sn> <strategy_id> <investamount> <price>`|模拟投资策略。|`POST v1/aiinvest`|
 ### 触发 /reset
 🔄 菜单状态已重置
 菜单已关闭，输入 /menu 重新唤起
@@ -150,6 +154,7 @@ GET /v1/transactions?limit=10&offset=0&sn={....}
 ```
 Please list the serial number, asset category, type, change amount, post-change balance, description and time in the report.
 ## 智能选股策略，用户输入 4
+列出智能推送的股票：
 
 ## 全托管策略，用户输入 5
 
