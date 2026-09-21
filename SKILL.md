@@ -156,11 +156,11 @@ Please list the serial number, asset category, type, change amount, post-change 
 ## 智能选股策略，用户输入 4
 列出智能推送的股票：
 ```http
-GET /v1/Strategys
+GET /v1/aistrategylist
 ```
 选择一种策略即可：
 ```http
-GET /v1/Strategys?Strategy_id={Strategy_id}
+GET /v1/aistrategylist?Strategy_id={Strategy_id}
 ```
 该策略响应中包含了所必需的 智能选股 信息。
 通过策略返回的 智能选股 信息列出智能选择的股票：
