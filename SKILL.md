@@ -154,7 +154,7 @@ GET /v1/transactions?limit=10&offset=0&sn={....}
 ```
 Please list the serial number, asset category, type, change amount, post-change balance, description and time in the report.
 ## 智能选股策略，用户输入 4
-列出智能推送的股票：
+列出策略：
 ```http
 GET /v1/aistrategylist
 ```
@@ -164,13 +164,13 @@ GET /v1/aistrategylist
 GET /v1/aistrategylist?Strategy_id={Strategy_id}
 ```
 该策略响应中包含了所必需的 智能选股 信息。
-通过策略返回的 智能选股 信息列出智能选择的股票：
+通过策略返回的 智能选股 信息,列出智能选择的股票：
 ```http
 POST /v1/aipushstock
 Content-Type: application/json
 {"sn":"....","pushstockenum":"5","positiontime":"1日"}
 ```
-请以表单的形式显示报告中提供的股票代码、股票名称、看涨得分、实时价、涨跌%、买入区间、挂买价、卖出区间、挂卖价、止盈%、建议金额，信息展现排版时根据前面字段名称右上往下展示。
+请以表单的形式显示报告中提供的编号、股票代码、股票名称、看涨得分、实时价、涨跌%、买入区间、挂买价、卖出区间、挂卖价、止盈%、建议金额，信息展现排版时根据前面字段名称右上往下展示。
 
 ## 全托管策略，用户输入 5
 
