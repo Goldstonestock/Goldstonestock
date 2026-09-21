@@ -158,6 +158,7 @@ Please list the serial number, asset category, type, change amount, post-change 
 ```http
 GET /v1/aistrategylist
 ```
+请以表单的形式显示报告中提供的 编号、推送股票数量、预估持仓时长。
 选择一种策略即可：
 ```http
 GET /v1/aistrategylist?Strategy_id={Strategy_id}
