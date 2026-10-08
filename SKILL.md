@@ -1,6 +1,12 @@
 ---
-name: Goldstonestock
-description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能。
+name: goldstonestock
+display_name: 金土智能体
+display_name_en: Goldstone agent
+description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/menu`查看所有菜单。
+description_zh: 这是Goldstonestock的技能文件库，专为AI代理设计。核心开源内容是：SKILL.md. 此技能用于指导提供支持的代理。skill.md调用Goldstonestock Skill Bot API完成诸如模拟用户注册登录、API关键字搜索、账户查询、模拟资金池存款、产品列表、策略订阅、策略关闭等操作。
+description_en: This is the skill library of Goldstonestock, specifically designed for AI agents. This skill is used to guide the AI agents providing support to invoke the Goldstonestock Skill Bot API to perform operations such as simulating user registration and login, API keyword search, account inquiry, simulating fund pool deposit, product listing, strategy subscription, and strategy cancellation.
+version: 1.0.0
+author: Tushare大数据开放社区
 ---
 ## 前置强制约束（必须放在最上方，解决一直思考）
 1. 每一轮**仅处理用户当前单条消息**，输出完回复，本轮立即终止，禁止自动执行下一轮、禁止主动预判用户输入。
@@ -30,33 +36,33 @@ Authorization: Bearer <api_key>
 ## 简介
 对话内交互式菜单系统。支持斜杠指令唤起菜单，发送数字选择菜单项，多层交互，/help查看指令。普通对话不拦截，仅命中指令/数字菜单时触发。
 ## 触发规则
-1. 用户输入 `/menu` → 输出Goldstonestock主菜单。
-2. 用户输入 `/help` → 输出全部指令清单。
-3. 用户输入 `/reset` → 重置菜单会话状态。
-4. 用户输入 `/close` → 关闭菜单。
+1. 用户输入 `/菜单` → 输出Goldstonestock主菜单。
+2. 用户输入 `/帮助` → 输出全部指令清单。
+3. 用户输入 `/重置` → 重置菜单会话状态。
+4. 用户输入 `/关闭` → 关闭菜单。
 5. 当菜单处于打开状态，用户输入纯数字 1~5，匹配对应菜单项并执行对应回复。
 6. 菜单未打开时，单纯输入数字，不触发菜单逻辑，正常对话。
 7. 其他普通文本，不拦截，正常进行对话。
 
 ## 状态定义
 - menu_open：布尔值，默认 false。
-  触发 `/menu` 后置为 true；触发 `/close` / 选择5后置为 false；触发 `/reset` 后置为 false。
+  触发 `/菜单` 后置为 true；触发 `/关闭` / 选择5后置为 false；触发 `/重置` 后置为 false。
 ## 指令列表
-- `/menu`：唤起小龙虾交互主菜单
-- `/help`：查看全部可用指令
-- `/reset`：重置会话菜单状态
-- `/close`：直接关闭菜单
+- `/菜单`：唤起小龙虾交互主菜单
+- `/帮助`：查看全部可用指令
+- `/重置`：重置会话菜单状态
+- `/关闭`：直接关闭菜单
 
 ## 回复模板
-### 触发 /menu
+### 触发 /菜单
 🦞 Goldstonestock 交互主菜单  
 ——————————————  
-【1】金土量化智能体登录和授权  
+【1】金土智能体登录和授权  
 【2】显示主账户余额  
 【3】显示账户每项的交易记录  
 【4】智能选股策略  
 【5】全托管策略  
-【6】模拟入金   
+【6】账户入金   
 【7】列出持仓    
 【8】列出已平持仓  
 【9】列出建仓待提交订单  
@@ -68,10 +74,29 @@ Authorization: Bearer <api_key>
 【15】列出平仓已成交订单  
 【16】列出平仓已撤销订单  
 👉 请回复数字选择功能，或输入 /help 查看指令  
-### 触发 /help
-请勿在每次回复中列出所有命令。在回复用户的常规问题时，只需说明：用户可以输入命令`/help`查看所有可用操作。
 
-当用户发送`/help`或询问可用命令时，请用中文回复以下命令列表。
+### 触发 用户输入 4
+🦞 Goldstonestock 智能选股策略  
+——————————————  
+【a】尾盘选股 
+【b】主力追踪  
+【c】四维共振选股  
+【d】返回主菜单   
+👉 请回复字母选择功能:
+### 四维共振  用户输入 c
+
+
+### 主力追踪  用户输入 b
+
+
+### 返回主菜单 用户输入 d
+ ```
+ /菜单
+ ```
+### 触发 /帮助
+请勿在每次回复中列出所有命令。在回复用户的常规问题时，只需说明：用户可以输入命令`/帮助`查看所有可用操作。
+
+当用户发送`/帮助`或询问可用命令时，请用中文回复以下命令列表。
 
 | 命令  | 用户操作 | 主要 API 接口 |
 | --- | --- | --- |
@@ -97,10 +122,10 @@ Authorization: Bearer <api_key>
 |`/selectstocks <sn> <pushstockenum> <positiontime>`|根据某一策略列出智能选股。|`POST v1/aipushstock`|
 |`/selectstock <sn> <selectstocke_id>`|展示某一只股的详细内容。|`POST v1/aiselectstocke`|
 |`/invest <sn> <strategy_id> <investamount> <price>`|模拟投资策略。|`POST v1/aiinvest`|
-### 触发 /reset
+### 触发 /重置
 🔄 菜单状态已重置
-菜单已关闭，输入 /menu 重新唤起
-### 触发 /close
+菜单已关闭，输入 /菜单 重新唤起
+### 触发 /关闭
 ❕ 菜单已关闭
 输入 /menu 随时重新打开菜单
 ## Safety Rules
@@ -153,7 +178,7 @@ Please report the account's assets, balance, available balance, locked balance, 
 GET /v1/transactions?limit=10&offset=0&sn={....}
 ```
 Please list the serial number, asset category, type, change amount, post-change balance, description and time in the report.
-## 智能选股策略，用户输入 4
+## 智能选股策略，用户输入 a
 列出策略：
 ```http
 GET /v1/aistrategylist
@@ -197,7 +222,7 @@ Content-Type: application/json
 
 
 ## 全托管策略，用户输入 5
-
+研究开发维护中
 ## Deposits，用户输入 6
 Goldstonestock platform only supports the CNH recharge method. If the user has not specified the type of currency to be recharged, please ask the user which asset they wish to recharge. If the user requests to recharge other assets, please explain that the Goldstonestock platform only supports CNH recharge.
 
