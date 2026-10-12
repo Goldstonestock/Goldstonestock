@@ -233,7 +233,7 @@ POST /v1/aistockinfoselect
 Content-Type: application/json
 {"ts_code":"600547.SH"}
 ```
-该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,图片链接并以img图片的形式展示及分析数据给出结论。
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,将图片url传递给visual_search工具获取内部reference_id,输出展示给用户及分析数据给出结论。
 当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
