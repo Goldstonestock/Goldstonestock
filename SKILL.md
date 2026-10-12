@@ -78,9 +78,9 @@ Authorization: Bearer <api_key>
 ### 触发 用户输入 4
 🦞 Goldstonestock 智能选股策略  
 ——————————————  
-【a】尾盘选股 
-【b】主力追踪  
-【c】四维共振选股  
+【a】尾盘抄底选股策略 
+【b】主力追踪选股策略  
+【c】四维共振选股策略  
 【d】返回主菜单   
 👉 请回复字母选择功能:
 ### 触发 /帮助
@@ -112,6 +112,11 @@ Authorization: Bearer <api_key>
 |`/aifourResonancestock`|四维共振选股策略。|`POST v1/aifourResonancestock`|
 |`/aistockinfoselect <ts_code>`|展示某一只股票信息详情。|`POST v1/aistockinfoselect`|
 |`/invest <sn> <ts_code> <investamount> <price>`|模拟投资策略。|`POST v1/aiinvest`|
+|`/Strategys`|列出策略。|`GET v1/aistrategylist`|
+|`/Strategy <Strategy_id>`|选择某一条策略执行。|`POST v1/aistrategyinfo`|
+|`/myStrategy <sn>`|我的全托管策略交易。|`POST v1/aimystareylist`|
+|`/closeStrategy <sn>`|关闭策略交易。|`POST v1/closestareyinfo`|
+|`/settleorder <sn> <positid>`|某个平仓合约的结算单。|`POST v1/aigetsettleorderdetail`|
 ### 触发 /重置
 🔄 菜单状态已重置
 菜单已关闭，输入 /菜单 重新唤起
@@ -228,7 +233,7 @@ POST /v1/aistockinfoselect
 Content-Type: application/json
 {"ts_code":"600547.SH"}
 ```
-该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,图片链接并以图片的形式展示及分析数据给出结论。
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,图片链接并以img图片的形式展示及分析数据给出结论。
 当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
@@ -244,7 +249,67 @@ Content-Type: application/json
 
 
 ## 全托管策略，用户输入 5
-研究开发维护中
+🦞 Goldstonestock 全托管策略交易  
+——————————————  
+【W】尾盘抄底策略交易   
+【Z】主力追踪策略交易  
+【S】四维共振策略交易  
+【F】返回主菜单   
+👉 请回复字母选择功能:
+
+### 尾盘抄底策略交易 用户输入 W
+列出策略：
+```http
+GET /v1/aistrategylist
+```
+请以表单的形式显示报告中提供的 id、zhiyin、zhisun、memo。
+选择一种策略即可：
+```http
+POST /v1/aistrategyinfo
+Content-Type: application/json
+{"sn":"22","strategy":"W","Strategy_id":"{id}"}
+```
+该策略响应提示 尾盘抄底策略交易托管授权成功。
+授权成功后执行：
+ ```
+ /菜单
+ ```
+### 主力追踪策略交易 用户输入 Z
+```http
+GET /v1/aistrategylist
+```
+请以表单的形式显示报告中提供的 id、zhiyin、zhisun、memo。
+选择一种策略即可：
+```http
+POST /v1/aistrategyinfo
+Content-Type: application/json
+{"sn":"22","strategy":"Z","Strategy_id":"{id}"}
+```
+该策略响应提示 尾盘抄底策略交易托管授权成功。
+授权成功后执行：
+ ```
+ /菜单
+ ```
+### 四维共振策略交易 用户输入 S
+```http
+GET /v1/aistrategylist
+```
+请以表单的形式显示报告中提供的 id、zhiyin、zhisun、memo。
+选择一种策略即可：
+```http
+POST /v1/aistrategyinfo
+Content-Type: application/json
+{"sn":"22","strategy":"S","Strategy_id":"{id}"}
+```
+该策略响应提示 尾盘抄底策略交易托管授权成功。
+授权成功后执行：
+ ```
+ /菜单
+ ```
+### 返回主菜单 用户输入 F
+ ```
+ /菜单
+ ```
 ## Deposits，用户输入 6
 Goldstonestock platform only supports the CNH recharge method. If the user has not specified the type of currency to be recharged, please ask the user which asset they wish to recharge. If the user requests to recharge other assets, please explain that the Goldstonestock platform only supports CNH recharge.
 
@@ -293,7 +358,6 @@ List Close Position:
 ```http
 GET /v1/aiclosepositionlist?limit=10&offset=0&sn={....}
 ```
-
 Please present the code, name, direction, position quantity, opening price, current price, floating profit/loss, profit/loss rate, margin occupation, spread fee, cumulative overnight interest, and position status (1 indicates normal, 2 indicates closed) in the report in the form of an information module.
 Translation:  
 -代码/名称：神农种业(300189.SZ)  
@@ -306,8 +370,14 @@ Translation:
 -占用保证金：5000  
 -累计点差费：1500  
 -累计隔夜利息：0  
--持仓状态:1表示正常，2表示已平仓  
-
+-持仓状态:1表示正常，2表示已平仓 
+选择一条记录即可：
+```http
+POST v1/aigetsettleorderdetail
+Content-Type: application/json
+{"sn":"22","positid":".."}
+```
+将返回的数据进行结构化整理。
 ## BUILD Pending submission order，用户输入 9
 List Order:
 ```http
