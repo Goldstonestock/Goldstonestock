@@ -175,8 +175,15 @@ POST /v1/aiweipanxu
 Content-Type: application/json
 {"sn":"123","top_n":"6","max_vol_mult":"1.8"}
 ```
-返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
-当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理及数据分析给出结论。
+选择一只股票即可：
+```http
+POST /v1/aistockinfoselect
+Content-Type: application/json
+{"ts_code":"600547.SH"}
+```
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理及分析给出结论。
+当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
 Content-Type: application/json
@@ -191,7 +198,14 @@ POST /v1/aifourResonancestock
 Content-Type: application/json
 {"sn":"123"}
 ```
-返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理及数据分析给出结论。
+选择一只股票即可：
+```http
+POST /v1/aistockinfoselect
+Content-Type: application/json
+{"ts_code":"600547.SH"}
+```
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理及分析给出结论。
 当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
@@ -207,7 +221,14 @@ POST /v1/aiMainforce
 Content-Type: application/json
 {"sn":"123","top_n":"6"}
 ```
-返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理及数据分析给出结论。
+选择一只股票即可：
+```http
+POST /v1/aistockinfoselect
+Content-Type: application/json
+{"ts_code":"600547.SH"}
+```
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理及分析给出结论。
 当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
