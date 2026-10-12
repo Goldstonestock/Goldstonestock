@@ -92,7 +92,7 @@ Authorization: Bearer <api_key>
 | --- | -- | --- |
 | `/menu` | 唤起 Goldstonestock 交互主菜单。| 技能帮助 |
 | `/help` | 显示所有可用的 Goldstonestock 操作。| 技能帮助 |
-| `/login <username>` | 开始GoldstoneStock登录和授权流程。| `POST /v1/ailogin`,`POST /v1/aiverylogin`,`POST /v1/aiverify`|
+| `/login <username>` | 开始GoldstoneStock授权流程。| `POST /v1/ailogin`,`POST /v1/aiverylogin`,`POST /v1/aiverify`|
 | `/accounts` | 显示主账户余额。| `POST /v1/aiaccounts` |
 |`/transactions`|显示账户账簿中每项的交易记录。|`GET /v1/transactions?limit=10&offset=0&sn={....}`|
 | `/deposit <sn> <CNH> <topupmoney>` | 为选定的资产创建一个模拟基金。 | `POST /v1/aideposit` |
@@ -206,7 +206,7 @@ Content-Type: application/json
 {"ts_code":"600547.SH"}
 ```
 该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理及分析给出结论。
-当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
+当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
 Content-Type: application/json
@@ -228,8 +228,8 @@ POST /v1/aistockinfoselect
 Content-Type: application/json
 {"ts_code":"600547.SH"}
 ```
-该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理及分析给出结论。
-当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,图片链接并以图片的形式展示及分析数据给出结论。
+当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
 Content-Type: application/json
