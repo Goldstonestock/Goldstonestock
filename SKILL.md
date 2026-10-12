@@ -83,23 +83,13 @@ Authorization: Bearer <api_key>
 【c】四维共振选股  
 【d】返回主菜单   
 👉 请回复字母选择功能:
-### 四维共振  用户输入 c
-
-
-### 主力追踪  用户输入 b
-
-
-### 返回主菜单 用户输入 d
- ```
- /菜单
- ```
 ### 触发 /帮助
 请勿在每次回复中列出所有命令。在回复用户的常规问题时，只需说明：用户可以输入命令`/帮助`查看所有可用操作。
 
 当用户发送`/帮助`或询问可用命令时，请用中文回复以下命令列表。
 
 | 命令  | 用户操作 | 主要 API 接口 |
-| --- | --- | --- |
+| --- | -- | --- |
 | `/menu` | 唤起 Goldstonestock 交互主菜单。| 技能帮助 |
 | `/help` | 显示所有可用的 Goldstonestock 操作。| 技能帮助 |
 | `/login <username>` | 开始GoldstoneStock登录和授权流程。| `POST /v1/ailogin`,`POST /v1/aiverylogin`,`POST /v1/aiverify`|
@@ -117,11 +107,11 @@ Authorization: Bearer <api_key>
 |`/Close-order-a`|列出平仓处理中订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=1&sn={....}`|
 |`/Close-order-b`|列出平仓成交订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=3&sn={....}`|
 |`/Close-order-c`|列出平仓撤销订单。|`GET /v1/aiclosetradeorder?limit=10&offset=0&status=4&sn={....}`|
-|`/Strategys`|列出策略。|`GET v1/aistrategylist`|
-|`/Strategy <Strategy_id>`|展示某一条策略详细内容。|`GET v1/aistrategyinfo`|
-|`/selectstocks <sn> <pushstockenum> <positiontime>`|根据某一策略列出智能选股。|`POST v1/aipushstock`|
-|`/selectstock <sn> <selectstocke_id>`|展示某一只股的详细内容。|`POST v1/aiselectstocke`|
-|`/invest <sn> <strategy_id> <investamount> <price>`|模拟投资策略。|`POST v1/aiinvest`|
+|`/aiweipanxu <top_n> <max_vol_mult>`|尾盘抄底选股策略。|`POST v1/aiweipanxu`|
+|`/aiMainforce <top_n>`|主力追踪选股策略。|`POST v1/aiMainforce`|
+|`/aifourResonancestock`|四维共振选股策略。|`POST v1/aifourResonancestock`|
+|`/aistockinfoselect <ts_code>`|展示某一只股票信息详情。|`POST v1/aistockinfoselect`|
+|`/invest <sn> <ts_code> <investamount> <price>`|模拟投资策略。|`POST v1/aiinvest`|
 ### 触发 /重置
 🔄 菜单状态已重置
 菜单已关闭，输入 /菜单 重新唤起
@@ -168,7 +158,7 @@ Use these after authentication:
 ```http
 POST /v1/aiaccounts
 Content-Type: application/json
-{"sn":"...."}
+{"sn":"123"}
 ```
 Please report the account's assets, balance, available balance, locked balance, investment amount, settled profit and loss, estimated profit and loss, and current status. Do not disclose the exchange fields or the name of the trading platform.
 
@@ -179,46 +169,57 @@ GET /v1/transactions?limit=10&offset=0&sn={....}
 ```
 Please list the serial number, asset category, type, change amount, post-change balance, description and time in the report.
 ## 智能选股策略，用户输入 a
-列出策略：
+列出尾盘抄底智能选股策略推荐的股票
 ```http
-GET /v1/aistrategylist
-```
-请以表单的形式显示报告中提供的 编号、推送股票数量、预估持仓时长。
-选择一种策略即可：
-```http
-GET /v1/aistrategylist?Strategy_id={Strategy_id}
-```
-该策略响应中包含了所必需的 智能选股 信息。
-通过策略返回的 智能选股 信息,列出智能选择的股票：
-```http
-POST /v1/aipushstock
+POST /v1/aiweipanxu
 Content-Type: application/json
-{"sn":"....","pushstockenum":"5","positiontime":"1日"}
+{"sn":"123","top_n":"6","max_vol_mult":"1.8"}
 ```
-请以表单的形式显示报告中提供的编号、股票代码、股票名称、看涨得分、实时价、涨跌%、买入区间、挂买价、卖出区间、挂卖价、止盈%、建议金额，信息展现排版时根据前面字段名称右上往下展示。
-选择一只股票策略即可：
-```http
-POST /v1/aiselectstocke
-Content-Type: application/json
-{"sn":"....","selectstocke_id":"..."}
-```
-该策略响应中包含了所必须的模拟投资信息`strategy_id`。
-当用户想要模拟投资或账户余额不为零时，需要创建一个模拟投资流程：
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
+当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
 Content-Type: application/json
-{"sn":"....","strategy_id":{strategy_id},"investamount":"....","price":""}
+{"sn":"333","ts_code":"","investamount":"....","price":""}
 ```
 响应中code 为 1 展示message提示信息
 
+### 四维共振  用户输入 c
+列出四维共振智能选股策略推荐的股票
+```http
+POST /v1/aifourResonancestock
+Content-Type: application/json
+{"sn":"123"}
+```
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
+当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
+```http
+POST /v1/aiinvest
+Content-Type: application/json
+{"sn":"333","ts_code":"","investamount":"....","price":""}
+```
+响应中code 为 1 展示message提示信息
 
+### 主力追踪  用户输入 b
+列出主力追踪智能选股策略推荐的股票
+```http
+POST /v1/aiMainforce
+Content-Type: application/json
+{"sn":"123","top_n":"6"}
+```
+返回的数据如果为空提示“没有相关标的”,如果不为空，请将返回结果的数据结构化整理。
+当用户想要模拟投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
+```http
+POST /v1/aiinvest
+Content-Type: application/json
+{"sn":"333","ts_code":"","investamount":"....","price":""}
+```
+响应中code 为 1 展示message提示信息
 
-
-
-
-
-
-
+### 返回主菜单 用户输入 d
+ ```
+ /菜单
+ ```
 
 
 ## 全托管策略，用户输入 5
@@ -231,7 +232,7 @@ When the user intends to make a deposit or when the account balance is zero, a s
 ```http
 POST /v1/aideposit
 Content-Type: application/json
-{"sn":"....","topupway":"CNH","topupmoney":"10"}
+{"sn":"22","topupway":"CNH","topupmoney":"10"}
 ```
 Use the returned data information "deposit_id".
 Continuously query the status of the simulated fund deposit records using the "deposit_id". Poll the conversation results until the "data" field is set to true:
