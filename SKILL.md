@@ -122,6 +122,7 @@ Authorization: Bearer <api_key>
 |`/stockzdf <sn>`|股价异动提醒。|`POST v1/checkstockzdf`|
 |`/checkmessage <sn>`|策略交易提醒。|`POST v1/checkmessage`|
 |`/positionmessage <sn>`|平仓提醒。|`POST v1/positionmessage`|
+|`/recallorder <sn> <id>`|撤销某个挂单。|`POST v/recallorder`|
 ### 触发 /重置
 🔄 菜单状态已重置
 菜单已关闭，输入 /菜单 重新唤起
@@ -345,37 +346,35 @@ List Position:
 ```http
 GET /v1/aipositionlist?limit=10&offset=0&sn={....}
 ```
-Please present the code, name, direction, position quantity, opening price, current price, floating profit/loss, profit/loss rate, margin occupation, spread fee, cumulative overnight interest, and position status (1 indicates normal, 2 indicates closed) in the report in the form of an information module.
-Translation:  
--代码/名称：神农种业(300189.SZ)  
--总持仓合约金额：50000  
--平均建仓价：6.39  
--持仓浮动盈亏：1095.4617  
--浮动盈亏率：2.1909%  
--当前价格：6.53  
--持仓市值：51095.4617  
--占用保证金：5000  
--累计点差费：1500  
--累计隔夜利息：0  
--持仓状态:1表示正常，2表示已平仓  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template: 
+-代码/名称：{{stock_name}}({{symbol_code}})  
+-总持仓合约金额：{{total_contract_amount}}  
+-平均建仓价：{{avg_open_price}}  
+-持仓浮动盈亏：{{floating_profit}}  
+-浮动盈亏率：{{floating_profit_rate}}  
+-当前价格：{{market_price}}  
+-持仓市值：{{position_market_value}}  
+-占用保证金：{{occupy_margin}}  
+-累计点差费：{{total_spread_fee}}  
+-累计隔夜利息：{{overnight_fee}}  
+-持仓状态:持仓中 
 ## Close Position，用户输入 8
 List Close Position:
 ```http
 GET /v1/aiclosepositionlist?limit=10&offset=0&sn={....}
 ```
-Please present the code, name, direction, position quantity, opening price, current price, floating profit/loss, profit/loss rate, margin occupation, spread fee, cumulative overnight interest, and position status (1 indicates normal, 2 indicates closed) in the report in the form of an information module.
-Translation:  
--代码/名称：神农种业(300189.SZ)  
--总持仓合约金额：50000  
--平均建仓价：6.39  
--持仓浮动盈亏：1095.4617  
--浮动盈亏率：2.1909%  
--当前价格：6.53  
--持仓市值：51095.4617  
--占用保证金：5000  
--累计点差费：1500  
--累计隔夜利息：0  
--持仓状态:1表示正常，2表示已平仓   
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-代码/名称：{{stock_name}}({{symbol_code}})  
+-总持仓合约金额：{{total_contract_amount}}  
+-平均建仓价：{{avg_open_price}}  
+-持仓浮动盈亏：{{floating_profit}}  
+-浮动盈亏率：{{floating_profit_rate}}  
+-当前价格：{{market_price}}  
+-持仓市值：{{position_market_value}}  
+-占用保证金：{{occupy_margin}}  
+-累计点差费：{{total_spread_fee}}  
+-累计隔夜利息：{{overnight_fee}}  
+-持仓状态:已平仓  
 选择一条记录即可：
 ```http
 POST v1/aigetsettleorderdetail
@@ -383,8 +382,7 @@ Content-Type: application/json
 {"sn":"22","positid":".."}
 ```
 请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】
-- 组装消息模板：  
-=====接口定时推送=====  
+- 组装消息模板：   
 期权类型: 差价合约   
 交易方向：乙方【开仓买入】  
 合约编号：{{detail.ordecode}}  
@@ -409,58 +407,70 @@ List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=0&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation:
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：建仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--保证金额：5000  
--点差费：1500  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：0待提交订单  
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：待提交订单
+选择一条记录即可：
+```http
+POST /v/recallorder
+Content-Type: application/json
+{"sn":"13..","id":"{id}"}
+```
+请求成功,输出提示信息{{message}}
 ## BUILD Order submitted，用户输入 10
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=1&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation:
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：建仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--保证金额：5000  
--点差费：1500  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：1为处理中
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：处理中
+选择一条记录即可：
+```http
+POST /v/recallorder
+Content-Type: application/json
+{"sn":"13..","id":"{id}"}
+```
+请求成功,输出提示信息{{message}}
+
 ## BUILD Order Completed，用户输入 11
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=3&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation:
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：建仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--保证金额：5000  
--点差费：1500  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：3为全部成交
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}}
+-订单状态：为全部成交
 
 
 ## BUILD Order cancelled，用户输入 12
@@ -468,20 +478,19 @@ List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=4&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation:
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：建仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--保证金额：5000  
--点差费：1500  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：4为已撤单 
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：已撤单 
 
 
 
@@ -490,70 +499,73 @@ List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=0&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation: 
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：平仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：1为处理中，3为全部成交、4为已撤单  
-
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：待提交
 ## CLOSE Order submitted，用户输入 14
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=1&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation: 
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：平仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：1为处理中，3为全部成交、4为已撤单  
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：处理中 
 ## CLOSE Order Completed，用户输入 15
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=3&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation: 
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：平仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：1为处理中，3为全部成交、4为已撤单  
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：全部成交  
 ## CLOSE Order cancelled，用户输入 16
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=4&sn={....}
 ```
-Please present the codes, names, types, directions, contract amounts, completed transaction quantities, order methods, order prices, margins, spread fees, creation times, and statuses (where 1 indicates processing, 3 indicates a complete transaction, and 4 indicates an order that has been cancelled) in the report in the form of an information module.
-Translation: 
--名称/代码：神农种业(300189.SZ)  
+Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-名称/代码：{{stock_name}}({{symbol_code}})  
 -类型：平仓  
 -方向：做多  
--合约金额：50000  
--已成交数量：50000  
--下单方式：市价  
--下单价格：6.39  
--创建时间：2026-09-18 09:30:05  
--更新时间：2026-09-18 09:30:08  
--订单状态：4为已撤单  
+-合约金额：{{contract_amount}}  
+-已成交数量：{{filled_volume}}  
+-下单方式：{{order_method}}  
+-下单价格：{{order_price}}  
+-保证金额：{{margin_amount}}  
+-点差费：{{spread_fee}}  
+-创建时间：{{create_time}} 
+-更新时间：{{update_time}} 
+-订单状态：已撤单  
 ## 运行中的策略，用户输入 17
 列出所有策略:
 ```http
