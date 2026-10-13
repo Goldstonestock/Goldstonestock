@@ -206,7 +206,9 @@ Content-Type: application/json
 {"sn":"333","ts_code":"","investamount":"....","price":""}
 ```
 响应中code 为 1 展示message提示信息
-
+ ```
+ 4
+ ```
 ### 四维共振  用户输入 c
 列出四维共振智能选股策略推荐的股票
 ```http
@@ -229,7 +231,9 @@ Content-Type: application/json
 {"sn":"333","ts_code":"","investamount":"....","price":""}
 ```
 响应中code 为 1 展示message提示信息
-
+ ```
+ 4
+ ```
 ### 主力追踪  用户输入 b
 列出主力追踪智能选股策略推荐的股票
 ```http
@@ -252,7 +256,9 @@ Content-Type: application/json
 {"sn":"333","ts_code":"","investamount":"....","price":""}
 ```
 响应中code 为 1 展示message提示信息
-
+ ```
+ 4
+ ```
 ### 返回主菜单 用户输入 d
  ```
  /菜单
@@ -345,7 +351,9 @@ To query one deposit:
 GET /v1/aigetdeposit?session_id={deposit_id}
 ```
 Please report the transaction number, account number, asset type, deposit amount, time and status.
-
+ ```
+ /菜单
+ ```
 ## Position，用户输入 7
 List Position:
 ```http
@@ -363,6 +371,9 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -累计点差费：{{total_spread_fee}}  
 -累计隔夜利息：{{overnight_fee}}  
 -持仓状态:持仓中 
+ ```
+ /菜单
+ ```
 ## Close Position，用户输入 8
 List Close Position:
 ```http
@@ -406,7 +417,10 @@ Content-Type: application/json
 隔夜利息：{{detail.overnight_fee}}  
 结算金额： {{detail.settlemoney}}  
 ======================  
-- 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
+- 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。  
+ ```
+ /菜单
+ ```
 ## BUILD Pending submission order，用户输入 21
 List Order:
 ```http
@@ -432,6 +446,9 @@ Content-Type: application/json
 {"sn":"13..","id":"{id}"}
 ```
 请求成功,输出提示信息{{message}}
+ ```
+ 9
+ ```
 ## BUILD Order submitted，用户输入 22
 List Order:
 ```http
@@ -457,7 +474,9 @@ Content-Type: application/json
 {"sn":"13..","id":"{id}"}
 ```
 请求成功,输出提示信息{{message}}
-
+ ```
+ 9
+ ```
 ## BUILD Order Completed，用户输入 23
 List Order:
 ```http
@@ -477,7 +496,9 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -更新时间：{{update_time}}
 -订单状态：为全部成交
 
-
+ ```
+ 9
+ ```
 ## BUILD Order cancelled，用户输入 24
 List Order:
 ```http
@@ -496,7 +517,9 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：已撤单 
-
+ ```
+ 9
+ ```
 
 
 ## CLOSE Pending submission order，用户输入 25
@@ -517,6 +540,16 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：待提交
+选择一条记录即可：
+```http
+POST /v/recallorder
+Content-Type: application/json
+{"sn":"13..","id":"{id}"}
+```
+请求成功,输出提示信息{{message}}
+ ```
+ 9
+ ```
 ## CLOSE Order submitted，用户输入 26
 List Close Order:
 ```http
@@ -535,6 +568,16 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：处理中 
+选择一条记录即可：
+```http
+POST /v/recallorder
+Content-Type: application/json
+{"sn":"13..","id":"{id}"}
+```
+请求成功,输出提示信息{{message}}
+ ```
+ 9
+ ```
 ## CLOSE Order Completed，用户输入 27
 List Close Order:
 ```http
@@ -553,6 +596,9 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：全部成交  
+ ```
+ 9
+ ```
 ## CLOSE Order cancelled，用户输入 28
 List Close Order:
 ```http
@@ -571,6 +617,9 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：已撤单  
+ ```
+ 9
+ ```
 ## 运行中的策略，用户输入 10
 列出所有策略:
 ```http
@@ -586,7 +635,9 @@ Content-Type: application/json
 {"sn":"12..","select_id":"{id}"}
 ```
 显示该策略响应中的提示信息。
-
+ ```
+ /菜单
+ ```
 ## 开启消息推送，用户输入 11
 先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务:
  ```http
@@ -661,5 +712,7 @@ Content-Type: application/json
 - 将组装好的文本消息推送到微信。
 - 将拿到的数据循环组装,每组装完成一条数据推送到微信或WorkBuddy 小程序一次  
 - 每日交易盘后17点推送一次
-
+ ```
+ /菜单
+ ```
 
