@@ -2,7 +2,7 @@
 name: goldstonestock
 display_name: 金土智能体
 display_name_en: Goldstone agent
-description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/菜单`查看所有菜单。
+description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/菜单`查看所有菜单,严格按照SKILL要求执行。
 description_zh: 这是Goldstonestock的技能文件库，专为AI代理设计。核心开源内容是：SKILL.md. 此技能用于指导提供支持的代理。skill.md调用Goldstonestock Skill Bot API完成诸如模拟用户注册登录、API关键字搜索、账户查询、模拟资金池存款、产品列表、策略订阅、策略关闭等操作。
 description_en: This is the skill library of Goldstonestock, specifically designed for AI agents. This skill is used to guide the AI agents providing support to invoke the Goldstonestock Skill Bot API to perform operations such as simulating user registration and login, API keyword search, account inquiry, simulating fund pool deposit, product listing, strategy subscription, and strategy cancellation.
 version: 1.0.0
@@ -375,14 +375,35 @@ Translation:
 -占用保证金：5000  
 -累计点差费：1500  
 -累计隔夜利息：0  
--持仓状态:1表示正常，2表示已平仓 
+-持仓状态:1表示正常，2表示已平仓   
 选择一条记录即可：
 ```http
 POST v1/aigetsettleorderdetail
 Content-Type: application/json
 {"sn":"22","positid":".."}
 ```
-将返回的数据进行结构化整理。
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】
+- 组装消息模板：  
+=====接口定时推送=====  
+期权类型: 差价合约   
+交易方向：乙方【开仓买入】  
+合约编号：{{detail.ordecode}}  
+标的资产：{{detail.symbol_code}}  
+交易行权日：{{detail.tradexqtiem}}  
+合约起始日：{{detail.agreementbgtime}}  
+合约到期日：{{detail.agreementendtime}}  
+期初价格：{{detail.begprice}}  
+强平价格：{{detail.endprice}}  
+行权时标的资产到期结算价格：{{detail.tradeprice}}  
+标的数量：{{detail.symbol_num}}  
+合约金额：{{detail.agreementamount}}  
+保证金金额：{{detail.occupy_margin}}  
+行权收益：{{detail.tradeear}}  
+财税费：{{detail.pounageFees}}  
+隔夜利息：{{detail.overnight_fee}}  
+结算金额： {{detail.settlemoney}}  
+======================  
+- 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
 ## BUILD Pending submission order，用户输入 9
 List Order:
 ```http
@@ -574,7 +595,7 @@ POST /v1/checkmessage
 Content-Type: application/json
 {"sn":"12.."}
 ```
-请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】。  
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】不在往下执行；如果不为空往下执行。  
 - 组装消息模板：  
 =====接口定时推送=====  
 通知名称: {{title}}   
