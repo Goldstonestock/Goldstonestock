@@ -72,7 +72,8 @@ Authorization: Bearer <api_key>
 【13】列出平仓待提交订单  
 【14】列出平仓已提交订单  
 【15】列出平仓已成交订单  
-【16】列出平仓已撤销订单  
+【16】列出平仓已撤销订单
+【17】运行中的策略  
 👉 请回复数字选择功能，或输入 /help 查看指令  
 
 ### 触发 用户输入 4
@@ -90,8 +91,8 @@ Authorization: Bearer <api_key>
 
 | 命令  | 用户操作 | 主要 API 接口 |
 | --- | -- | --- |
-| `/menu` | 唤起 Goldstonestock 交互主菜单。| 技能帮助 |
-| `/help` | 显示所有可用的 Goldstonestock 操作。| 技能帮助 |
+| `/菜单` | 唤起 Goldstonestock 交互主菜单。| 技能帮助 |
+| `/帮助` | 显示所有可用的 Goldstonestock 操作。| 技能帮助 |
 | `/login <username>` | 开始GoldstoneStock授权流程。| `POST /v1/ailogin`,`POST /v1/aiverylogin`,`POST /v1/aiverify`|
 | `/accounts` | 显示主账户余额。| `POST /v1/aiaccounts` |
 |`/transactions`|显示账户账簿中每项的交易记录。|`GET /v1/transactions?limit=10&offset=0&sn={....}`|
@@ -115,14 +116,14 @@ Authorization: Bearer <api_key>
 |`/Strategys`|列出策略。|`GET v1/aistrategylist`|
 |`/Strategy <Strategy_id>`|选择某一条策略执行。|`POST v1/aistrategyinfo`|
 |`/myStrategy <sn>`|我的全托管策略交易。|`POST v1/aimystareylist`|
-|`/closeStrategy <sn>`|关闭策略交易。|`POST v1/closestareyinfo`|
+|`/closeStrategy <sn> <strategy_id>`|关闭策略交易。|`POST v1/closestareyinfo`|
 |`/settleorder <sn> <positid>`|某个平仓合约的结算单。|`POST v1/aigetsettleorderdetail`|
 ### 触发 /重置
 🔄 菜单状态已重置
 菜单已关闭，输入 /菜单 重新唤起
 ### 触发 /关闭
 ❕ 菜单已关闭
-输入 /menu 随时重新打开菜单
+输入 /菜单 随时重新打开菜单
 ## Safety Rules
 - 请勿做出任何保证盈利的承诺。——除满足 Goldstonestock 用户的明确要求外，我们不提供任何个性化的财务建议。
 - 请勿索取或处理apk_key、私钥、账户密码或原始账户恢复数据。
@@ -233,7 +234,7 @@ POST /v1/aistockinfoselect
 Content-Type: application/json
 {"ts_code":"600547.SH"}
 ```
-该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,将图片url传递给visual_search工具获取内部reference_id,输出展示给用户及分析数据给出结论。
+该响应中包含了所必须的投资信息`ts_code`,并对响应中的数据进行结构化整理并展示所有信息,将图片url以卡片组展示给用户及分析数据给出结论。
 当用户想要投资或账户余额不为零时，需要创建一个投资流程,用户输入{ts_code}股票代码和投资金额{investamount}即可,股票价格{price}选择输入,股票价格为空按照市场价挂单,股票价格不为空按照限价挂单：
 ```http
 POST /v1/aiinvest
@@ -528,3 +529,18 @@ Translation:
 -创建时间：2026-09-18 09:30:05  
 -更新时间：2026-09-18 09:30:08  
 -订单状态：4为已撤单  
+## 运行中的策略，用户输入 17
+列出所有策略:
+```http
+POST /v1/aimystareylist
+Content-Type: application/json
+{"sn":"12.."}
+```
+将该响应中的策略数据进行结构化整理,响应中包含关闭策略所需的所有信息。
+选择一种运行中的策略即可：
+```http
+POST /v1/closestareyinfo
+Content-Type: application/json
+{"sn":"12..","strategy_id":"...."}
+```
+显示该策略响应中的提示信息。
