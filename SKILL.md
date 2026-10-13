@@ -74,6 +74,7 @@ Authorization: Bearer <api_key>
 【15】列出平仓已成交订单  
 【16】列出平仓已撤销订单
 【17】运行中的策略  
+【18】开启消息推送  
 👉 请回复数字选择功能，或输入 /help 查看指令  
 
 ### 触发 用户输入 4
@@ -96,8 +97,8 @@ Authorization: Bearer <api_key>
 | `/login <username>` | 开始GoldstoneStock授权流程。| `POST /v1/ailogin`,`POST /v1/aiverylogin`,`POST /v1/aiverify`|
 | `/accounts` | 显示主账户余额。| `POST /v1/aiaccounts` |
 |`/transactions`|显示账户账簿中每项的交易记录。|`GET /v1/transactions?limit=10&offset=0&sn={....}`|
-| `/deposit <sn> <CNH> <topupmoney>` | 为选定的资产创建一个模拟基金。 | `POST /v1/aideposit` |
-|`/deposit-status <deposit_id>`|模拟存款记录的状态。|`GET /v1/airesult?session_id={deposit_id}`|
+| `/deposit <sn> <CNH> <topupmoney>` | 为选定的资产创建一个基金。 | `POST /v1/aideposit` |
+|`/deposit-status <deposit_id>`|存款记录的状态。|`GET /v1/airesult?session_id={deposit_id}`|
 |`/Position`|列出持仓。|`GET /v1/aipositionlist?limit=10&offset=0&sn={....}`|
 |`/Close-position`|列出已平持仓。|`GET /v1/aiclosepositionlist?limit=10&offset=0&sn={....}`|
 |`/Order-a`|列出建仓待提交订单。|`GET /v1/aitradeorder?limit=10&offset=0&status=0&sn={....}`|
@@ -116,8 +117,11 @@ Authorization: Bearer <api_key>
 |`/Strategys`|列出策略。|`GET v1/aistrategylist`|
 |`/Strategy <Strategy_id>`|选择某一条策略执行。|`POST v1/aistrategyinfo`|
 |`/myStrategy <sn>`|我的全托管策略交易。|`POST v1/aimystareylist`|
-|`/closeStrategy <sn> <strategy_id>`|关闭策略交易。|`POST v1/closestareyinfo`|
+|`/closeStrategy <sn> <select_id>`|关闭策略交易。|`POST v1/closestareyinfo`|
 |`/settleorder <sn> <positid>`|某个平仓合约的结算单。|`POST v1/aigetsettleorderdetail`|
+|`/stockzdf <sn>`|股价异动提醒。|`POST v1/checkstockzdf`|
+|`/checkmessage <sn>`|策略交易提醒。|`POST v1/checkmessage`|
+|`/positionmessage <sn>`|平仓提醒。|`POST v1/positionmessage`|
 ### 触发 /重置
 🔄 菜单状态已重置
 菜单已关闭，输入 /菜单 重新唤起
@@ -541,6 +545,22 @@ Content-Type: application/json
 ```http
 POST /v1/closestareyinfo
 Content-Type: application/json
-{"sn":"12..","strategy_id":"{id}"}
+{"sn":"12..","select_id":"{id}"}
 ```
 显示该策略响应中的提示信息。
+
+## 开启消息推送，用户输入 18
+先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务。
+ ```http
+POST /v1/checkstockzdf
+Content-Type: application/json
+{"sn":"12.."}
+```
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】。  
+-组装消息模板：  
+=====接口定时推送=====  
+采集时间：{当前执行时间}  
+{{循环提取字段，按条目输出}}  
+======================  
+-禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
+-将组装好的文本消息推送到微信。  
