@@ -64,19 +64,24 @@ Authorization: Bearer <api_key>
 【5】全托管策略  
 【6】账户入金   
 【7】列出持仓    
-【8】列出已平持仓  
-【9】列出建仓待提交订单  
-【10】列出建仓已提交订单  
-【11】列出建仓已成交订单  
-【12】列出建仓已撤销订单  
-【13】列出平仓待提交订单  
-【14】列出平仓已提交订单  
-【15】列出平仓已成交订单  
-【16】列出平仓已撤销订单
-【17】运行中的策略  
-【18】开启消息推送  
+【8】列出平仓  
+【9】交易订单  
+【10】运行中的策略  
+【11】开启消息推送  
 👉 请回复数字选择功能，或输入 /help 查看指令  
-
+### 触发  用户输入 9
+🦞 Goldstonestock 交易订单  
+——————————————  
+【21】列出建仓待提交订单  
+【22】列出建仓已提交订单  
+【23】列出建仓已成交订单  
+【24】列出建仓已撤销订单  
+【25】列出平仓待提交订单  
+【26】列出平仓已提交订单  
+【27】列出平仓已成交订单  
+【28】列出平仓已撤销订单 
+【d】返回主菜单   
+👉 请回复字母选择功能:
 ### 触发 用户输入 4
 🦞 Goldstonestock 智能选股策略  
 ——————————————  
@@ -402,7 +407,7 @@ Content-Type: application/json
 结算金额： {{detail.settlemoney}}  
 ======================  
 - 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
-## BUILD Pending submission order，用户输入 9
+## BUILD Pending submission order，用户输入 21
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=0&sn={....}
@@ -427,7 +432,7 @@ Content-Type: application/json
 {"sn":"13..","id":"{id}"}
 ```
 请求成功,输出提示信息{{message}}
-## BUILD Order submitted，用户输入 10
+## BUILD Order submitted，用户输入 22
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=1&sn={....}
@@ -453,7 +458,7 @@ Content-Type: application/json
 ```
 请求成功,输出提示信息{{message}}
 
-## BUILD Order Completed，用户输入 11
+## BUILD Order Completed，用户输入 23
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=3&sn={....}
@@ -473,7 +478,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -订单状态：为全部成交
 
 
-## BUILD Order cancelled，用户输入 12
+## BUILD Order cancelled，用户输入 24
 List Order:
 ```http
 GET /v1/aitradeorder?limit=10&offset=0&status=4&sn={....}
@@ -494,7 +499,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 
 
 
-## CLOSE Pending submission order，用户输入 13
+## CLOSE Pending submission order，用户输入 25
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=0&sn={....}
@@ -512,7 +517,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：待提交
-## CLOSE Order submitted，用户输入 14
+## CLOSE Order submitted，用户输入 26
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=1&sn={....}
@@ -530,7 +535,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：处理中 
-## CLOSE Order Completed，用户输入 15
+## CLOSE Order Completed，用户输入 27
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=3&sn={....}
@@ -548,7 +553,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：全部成交  
-## CLOSE Order cancelled，用户输入 16
+## CLOSE Order cancelled，用户输入 28
 List Close Order:
 ```http
 GET /v1/aiclosetradeorder?limit=10&offset=0&status=4&sn={....}
@@ -566,7 +571,7 @@ Request successful: Obtain the JSON returned by the interface, extract the speci
 -创建时间：{{create_time}} 
 -更新时间：{{update_time}} 
 -订单状态：已撤单  
-## 运行中的策略，用户输入 17
+## 运行中的策略，用户输入 10
 列出所有策略:
 ```http
 POST /v1/aimystareylist
@@ -582,7 +587,7 @@ Content-Type: application/json
 ```
 显示该策略响应中的提示信息。
 
-## 开启消息推送，用户输入 18
+## 开启消息推送，用户输入 11
 先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务:
  ```http
 POST /v1/checkstockzdf
