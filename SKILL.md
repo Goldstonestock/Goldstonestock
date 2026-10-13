@@ -2,7 +2,7 @@
 name: goldstonestock
 display_name: 金土智能体
 display_name_en: Goldstone agent
-description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/menu`查看所有菜单。
+description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/菜单`查看所有菜单。
 description_zh: 这是Goldstonestock的技能文件库，专为AI代理设计。核心开源内容是：SKILL.md. 此技能用于指导提供支持的代理。skill.md调用Goldstonestock Skill Bot API完成诸如模拟用户注册登录、API关键字搜索、账户查询、模拟资金池存款、产品列表、策略订阅、策略关闭等操作。
 description_en: This is the skill library of Goldstonestock, specifically designed for AI agents. This skill is used to guide the AI agents providing support to invoke the Goldstonestock Skill Bot API to perform operations such as simulating user registration and login, API keyword search, account inquiry, simulating fund pool deposit, product listing, strategy subscription, and strategy cancellation.
 version: 1.0.0
@@ -550,7 +550,7 @@ Content-Type: application/json
 显示该策略响应中的提示信息。
 
 ## 开启消息推送，用户输入 18
-先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务。
+先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务:
  ```http
 POST /v1/checkstockzdf
 Content-Type: application/json
@@ -561,10 +561,67 @@ Content-Type: application/json
 =====接口定时推送=====  
 股票名称: {{items.name}}  
 股票代码：{{items.ts_code}}  
-时间：{{trade_date}}  
+时间：{当前执行时间}  
 备注：如果{{items.pct_chg}}小于0,"已下跌{{items.pct_chg}}";如果{{items.pct_chg}}大于0,"已上涨{{items.pct_chg}}"  
 ======================  
 - 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
 - 将组装好的文本消息推送到微信。
 - 将拿到的数据循环组装,每组装完成一条数据推送到微信或WorkBuddy 小程序一次  
+- 交易时段每小时推送一次  
+以上自动化定时任务创建完成后,在创建一个任务名为"金土智能体策略交易提醒"的消息推送自动化定时任务:  
+ ```http
+POST /v1/checkmessage
+Content-Type: application/json
+{"sn":"12.."}
+```
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】。  
+- 组装消息模板：  
+=====接口定时推送=====  
+通知名称: {{title}}   
+通知时间：{当前执行时间}  
+备注：{{content}}  
+======================  
+- 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
+- 将组装好的文本消息推送到微信。
+- 将拿到的数据循环组装,每组装完成一条数据推送到微信或WorkBuddy 小程序一次  
 - 交易时段每小时推送一次
+以上自动化定时任务创建完成后,在创建一个任务名为"金土智能体平仓结算提醒"的消息推送自动化定时任务: 
+ ```http
+POST /v1/positionmessage
+Content-Type: application/json
+{"sn":"12.."}
+```
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】不在往下执行。如果不为空
+循环数据每次循环都使用数据中的{id}字段执行一下任务：
+ ```http
+POST /v1/aigetsettleorderdetail
+Content-Type: application/json
+{"sn":"12..","positid":{id}}
+```
+请求成功：拿到接口返回JSON，提取 data 指定字段；字段缺失或空值统一显示【无数据】
+- 组装消息模板：  
+=====接口定时推送=====  
+期权类型: 差价合约   
+交易方向：乙方【开仓买入】  
+合约编号：{{detail.ordecode}}  
+标的资产：{{detail.symbol_code}}  
+交易行权日：{{detail.tradexqtiem}}  
+合约起始日：{{detail.agreementbgtime}}  
+合约到期日：{{detail.agreementendtime}}  
+期初价格：{{detail.begprice}}  
+强平价格：{{detail.endprice}}  
+行权时标的资产到期结算价格：{{detail.tradeprice}}  
+标的数量：{{detail.symbol_num}}  
+合约金额：{{detail.agreementamount}}  
+保证金金额：{{detail.occupy_margin}}  
+行权收益：{{detail.tradeear}}  
+财税费：{{detail.pounageFees}}  
+隔夜利息：{{detail.overnight_fee}}  
+结算金额： {{detail.settlemoney}}  
+======================  
+- 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
+- 将组装好的文本消息推送到微信。
+- 将拿到的数据循环组装,每组装完成一条数据推送到微信或WorkBuddy 小程序一次  
+- 每日交易盘后17点推送一次
+
+
