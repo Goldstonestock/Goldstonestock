@@ -541,6 +541,6 @@ Content-Type: application/json
 ```http
 POST /v1/closestareyinfo
 Content-Type: application/json
-{"sn":"12..","strategy_id":"...."}
+{"sn":"12..","strategy_id":"{id}"}
 ```
 显示该策略响应中的提示信息。
