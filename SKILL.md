@@ -1,11 +1,11 @@
 ---
-name: goldstonestock
+name: goldstoneagent
 display_name: 金土智能体
 display_name_en: Goldstone agent
 description: Goldstonestock技能机器人的API可用于实现基于Goldstonestock的登录、设置API密钥、账户查询、资金充值、策略管理、策略投资和平仓，以及查看持仓和盈亏情况。该智能代理仅用作模拟量化软件，不进行实际投资。当用户希望AI代理操作Goldstonestock时，可以通过充值合约存入模拟资金、将主资金分配到各种策略、查看余额或持仓情况以及平仓特定策略等方式触发这些API功能,首次使用输入`/菜单`查看所有菜单,严格按照SKILL要求执行。
 description_zh: 这是Goldstonestock的技能文件库，专为AI代理设计。核心开源内容是：SKILL.md. 此技能用于指导提供支持的代理。skill.md调用Goldstonestock Skill Bot API完成诸如模拟用户注册登录、API关键字搜索、账户查询、模拟资金池存款、产品列表、策略订阅、策略关闭等操作。
 description_en: This is the skill library of Goldstonestock, specifically designed for AI agents. This skill is used to guide the AI agents providing support to invoke the Goldstonestock Skill Bot API to perform operations such as simulating user registration and login, API keyword search, account inquiry, simulating fund pool deposit, product listing, strategy subscription, and strategy cancellation.
-version: 1.0.0
+version: 1.0.2
 author: Tushare大数据开放社区
 ---
 ## 前置强制约束（必须放在最上方，解决一直思考）
@@ -62,9 +62,9 @@ Authorization: Bearer <api_key>
 【3】显示账户每项的交易记录  
 【4】智能选股策略  
 【5】全托管策略  
-【6】账户入金   
+【6】账户入金  
 【7】列出持仓    
-【8】列出平仓  
+【8】列出平仓   
 【9】交易订单  
 【10】运行中的策略  
 【11】开启消息推送  
@@ -81,7 +81,7 @@ Authorization: Bearer <api_key>
 【27】列出平仓已成交订单  
 【28】列出平仓已撤销订单 
 【d】返回主菜单   
-👉 请回复字母选择功能:
+👉 请回复数字或字母选择功能:
 ### 触发 用户输入 4
 🦞 Goldstonestock 智能选股策略  
 ——————————————  
@@ -163,9 +163,8 @@ Content-Type: application/json
 ```http
 POST /v1/aiverify
 Content-Type: application/json
-{"sn":"1234"}
+{"sn":"..."}
 ```
-
 验证响应包含 `id`、`email`、`trade_name`、`isauthposition`，以及可用时的账户信息。
 ## Accounts，用户输入 2
 Goldstonestock users have the following identifiable account types:
@@ -174,7 +173,7 @@ Use these after authentication:
 ```http
 POST /v1/aiaccounts
 Content-Type: application/json
-{"sn":"123"}
+{"sn":"..."}
 ```
 Please report the account's assets, balance, available balance, locked balance, investment amount, settled profit and loss, estimated profit and loss, and current status. Do not disclose the exchange fields or the name of the trading platform.
 
@@ -380,6 +379,7 @@ List Close Position:
 GET /v1/aiclosepositionlist?limit=10&offset=0&sn={....}
 ```
 Request successful: Obtain the JSON returned by the interface, extract the specified field "data"; if the field is missing or has a null value, display "No data" and stop further execution. If not null, loop to assemble the message template:  
+-编号 id：{{id}}  
 -代码/名称：{{stock_name}}({{symbol_code}})  
 -总持仓合约金额：{{total_contract_amount}}  
 -平均建仓价：{{avg_open_price}}  
