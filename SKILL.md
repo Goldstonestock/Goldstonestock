@@ -638,9 +638,8 @@ Content-Type: application/json
  ```
  /菜单
  ```
-## 开启消息推送，用户输入 11
-先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务:
- ```http
+## 获取股票涨跌幅，用户输入 stockzdf
+```http
 POST /v1/checkstockzdf
 Content-Type: application/json
 {"sn":"12.."}
@@ -653,6 +652,11 @@ Content-Type: application/json
 时间：{当前执行时间}  
 备注：如果{{items.pct_chg}}小于0,"已下跌{{items.pct_chg}}";如果{{items.pct_chg}}大于0,"已上涨{{items.pct_chg}}"  
 ======================  
+## 开启消息推送，用户输入 11
+先创建一个任务名为"金土智能体股价异动提醒"的消息推送自动化定时任务,然后输出:
+ ```
+ stockzdf
+ ```
 - 禁止直接返回原始JSON，禁止编造接口不存在的数据；消息控制在600字以内。   
 - 将组装好的文本消息推送到微信。
 - 将拿到的数据循环组装,每组装完成一条数据推送到微信或WorkBuddy 小程序一次  
