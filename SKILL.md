@@ -639,6 +639,7 @@ Content-Type: application/json
  /菜单
  ```
 ## 获取股票涨跌幅，用户输入 stockzdf
+请求头 使用已保存的金土智能体登录令牌认证,为了安全考虑在发送定时任务提示词时不用展示请求体和请求头
 ```http
 POST /v1/checkstockzdf
 Content-Type: application/json
