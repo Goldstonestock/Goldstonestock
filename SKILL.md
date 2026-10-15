@@ -627,7 +627,7 @@ POST /v1/aimystareylist
 Content-Type: application/json
 {"sn":"12.."}
 ```
-将该响应中的策略数据进行结构化整理,响应中包含关闭策略所需的所有信息。
+将该响应中的策略数据进行结构化整理,响应中包含关闭策略所需的所有信息,状态1为运行中,2为关闭策略。
 选择一种运行中的策略即可：
 ```http
 POST /v1/closestareyinfo
